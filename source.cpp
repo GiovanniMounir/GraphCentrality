@@ -16,10 +16,8 @@ public:
 };*/
 class Node
 {
-	int index;
 	map<int, int> edges;
 public:
-	int getIndex() { return index;  }
 	void connectNode(int target, int weight)
 	{
 		edges[target] = weight;
@@ -28,16 +26,11 @@ public:
 	{
 		return edges.size();
 	}
-	Node(int index) { this->index = index; }
 	Node(){}
 };
 class Graph {
 public:
 	map<int, Node> nodes;
-	void createNode(int index)
-	{
-		nodes[index] = Node(index);
-	}
 	void addEdge(int index, int target, int weight)
 	{	
 		nodes[index].connectNode(target, weight);
@@ -50,7 +43,6 @@ int main()
 	int n,m;
 	cin >> n >> m;
 	int t1, t2, t3;
-	for (int i = 0; i < n; i++) graph.createNode(i);
 	for (int i = 0; i < m; i++)
 	{
 		cin >> t1 >> t2 >> t3;
