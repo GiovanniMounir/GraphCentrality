@@ -14,7 +14,9 @@ for line in content[1:]:
 edge_labels=dict([((u,v,),d['weight'])
                  for u,v,d in G.edges(data=True)])
 
-pos=nx.spring_layout(G)
+pos = nx.spring_layout(G)
 nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
-nx.draw(G,pos, node_size=1500,with_labels=True)
+d = nx.betweenness_centrality(G, normalized=True)
+
+nx.draw(G,pos, node_size=[max(v * 1500,100) for v in d.values()] , with_labels=True)
 plt.show()
