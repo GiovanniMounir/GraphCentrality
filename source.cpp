@@ -46,9 +46,10 @@ public:
 string printPath(set<int> * parent, int j)
 {
 	if (find(parent[j].begin(), parent[j].end(), -1) != parent[j].end())
-		return "";
+		return "\n";
 	
 	string s = "";
+
 	for (set<int>::iterator it = parent[j].begin(); it != parent[j].end(); it++)
 	{
 		s += printPath(parent, *it) + "->" + to_string(j);
@@ -64,6 +65,7 @@ int minDistance(map<int, int> dist, map<int, bool> visited)
 			min = dist[v], min_index = v;
 	return min_index; //possible crash: variable not defined; should not happen
 }
+
 map<int, int> dijkstra(map<int, Node> nodes, int n)
 {
 	map<int, bool> visited;
@@ -102,7 +104,9 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 	int  s = 0;
 	for (int i = 0; i < nodes.size(); i++)
 	{
-		cout << n << printPath(parent, i) << endl;
+		string s = printPath(parent, i);
+		if (s != "\n")
+		cout << s << endl;
 	}
 	return dist;
 }
@@ -138,6 +142,7 @@ int main()
 
 	for (int n = 0; n < graph.nodes.size(); n++)
 	{
+		cout << "[" << n << "]";
 		dijkstra(graph.nodes, n);
 	}
 	cin >> t1;
