@@ -3,7 +3,7 @@
 #include <string>
 #include <set>
 #include <list>
-#include <vector>
+#include <stack>
 using namespace std;
 class Node
 {
@@ -31,8 +31,8 @@ public:
 	}
 	void addEdge(int index, int target, int weight)
 	{
-//		createNode(index);
-//		createNode(target);
+		//		createNode(index);
+		//		createNode(target);
 		nodes[index].connectNode(target, weight);
 		nodes[target].connectNode(index, weight);
 	}
@@ -44,21 +44,29 @@ public:
 		delete[] Cb;
 	}
 };
-vector<list<int>> s;
-void printPath(set<int> * parent, int j,int f=0)
+
+
+void printPath(set<int> * parent , stack<int> s, int j, int f = 0)
 {
-	if (*parent[j].begin() == -1) return;
-	
-	s[f].push_back(j);
+	if (*parent[j].begin() == -1)
+	{
+		if (s.empty()) return;
+		cout << j;
+		while (!s.empty())
+		{
+			cout << "," << s.top();
+			s.pop();
+		}
+		cout << endl;
+		
+		return;
+	}
+	s.push(j);
 
 
-
-
-	
 	for (auto i : parent[j])
 	{
-		 printPath(parent, i);
-
+		printPath(parent,s, i,f++);
 	}
 	return;
 }
@@ -95,9 +103,7 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 						parent[edgeNode.first].clear();
 						parent[edgeNode.first].insert(u);
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
-						/*
-						3 [1,
-						*/
+						
 					}
 					else if (dist[u] + edgeNode.second == dist[edgeNode.first])
 					{
@@ -107,14 +113,13 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 			}
 		}
 	}
-	
-	for (int i = 0; i < nodes.size(); i++)
+
+	for (int i =n; i < nodes.size(); i++)
 	{
-		s.clear();
-		s.resize(nodes.size()*nodes.size());
-		 printPath(parent, i);
-	/*	if (s != "\n")
-		cout << s << endl;*/
+		
+		stack<int> s;
+		printPath(parent,s, i);
+		
 	}
 	return dist;
 }
@@ -150,7 +155,6 @@ int main()
 
 	for (int n = 0; n < graph.nodes.size(); n++)
 	{
-		cout << "[" << n << "]";
 		dijkstra(graph.nodes, n);
 	}
 	cin >> t1;
