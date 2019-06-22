@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 #include <set>
+#include <list>
+#include <vector>
 using namespace std;
 class Node
 {
@@ -42,19 +44,23 @@ public:
 		delete[] Cb;
 	}
 };
-
-string printPath(set<int> * parent, int j, int main_index)
+vector<list<int>> s;
+void printPath(set<int> * parent, int j,int f=0)
 {
-	if (*parent[j].begin() == -1)
-		return "," +to_string(main_index) + "\n" + to_string(j);
+	if (*parent[j].begin() == -1) return;
 	
-	string s = "";
+	s[f].push_back(j);
+
+
+
+
+	
 	for (auto i : parent[j])
 	{
-		s += printPath(parent, i, main_index) + "," + to_string(j);
+		 printPath(parent, i);
 
 	}
-	return s;
+	return;
 }
 
 int minDistance(map<int, int> dist, map<int, bool> visited)
@@ -101,13 +107,14 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 			}
 		}
 	}
-	int  s = 0;
+	
 	for (int i = 0; i < nodes.size(); i++)
 	{
-
-		string s = printPath(parent, i, i);
-		if (s != "\n")
-		cout << s << endl;
+		s.clear();
+		s.resize(nodes.size()*nodes.size());
+		 printPath(parent, i);
+	/*	if (s != "\n")
+		cout << s << endl;*/
 	}
 	return dist;
 }
