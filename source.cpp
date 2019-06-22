@@ -43,16 +43,16 @@ public:
 	}
 };
 
-string printPath(set<int> * parent, int j)
+string printPath(set<int> * parent, int j, int main_index)
 {
 	if (*parent[j].begin() == -1)
-		return "\n";
+		return "," +to_string(main_index) + "\n" + to_string(j);
 	
 	string s = "";
-
 	for (auto i : parent[j])
 	{
-		s += printPath(parent, i) + "->" + to_string(j);
+		s += printPath(parent, i, main_index) + "," + to_string(j);
+
 	}
 	return s;
 }
@@ -86,6 +86,7 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 				{
 					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
+						parent[edgeNode.first].clear();
 						parent[edgeNode.first].insert(u);
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 						/*
@@ -103,7 +104,8 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 	int  s = 0;
 	for (int i = 0; i < nodes.size(); i++)
 	{
-		string s = printPath(parent, i);
+
+		string s = printPath(parent, i, i);
 		if (s != "\n")
 		cout << s << endl;
 	}
