@@ -1,7 +1,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <vector>
+#include <set>
 using namespace std;
 class Node
 {
@@ -43,13 +43,13 @@ public:
 	}
 };
 
-string printPath(vector<int> * parent, int j)
+string printPath(set<int> * parent, int j)
 {
 	if (find(parent[j].begin(), parent[j].end(), -1) != parent[j].end())
 		return "";
 	
 	string s = "";
-	for (vector<int>::iterator it = parent[j].begin(); it != parent[j].end(); it++)
+	for (set<int>::iterator it = parent[j].begin(); it != parent[j].end(); it++)
 	{
 		s += printPath(parent, *it) + "->" + to_string(j);
 	}
@@ -68,11 +68,10 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 {
 	map<int, bool> visited;
 	map<int, int> dist;
-	vector<int> * parent = new vector<int>[n];
-
+	set<int> * parent = new set<int>[nodes.size()];
 	for (int i = 0; i < nodes.size(); i++) visited[i] = false, dist[i] = INT_MAX;
 	dist[n] = 0;
-	parent[n].push_back(-1);
+	parent[n].insert(-1);
 	for (int i = 0; i < nodes.size() - 1; i++)
 	{
 		int u = minDistance(dist, visited);
@@ -81,17 +80,29 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 		{
 			for (auto const& edgeNode : nodes[u].edges) //foreach edge in u.. (key = node, value = weight)
 			{
-				if (!visited[edgeNode.first] && (dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
+				if (!visited[edgeNode.first])
 				{
-					parent[edgeNode.first].push_back(u);
-					dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
+					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
+					{
+						parent[edgeNode.first].clear();
+						parent[edgeNode.first].insert(u);
+						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
+						/*
+						3 [1,
+						*/
+					}
+					else if (dist[u] + edgeNode.second == dist[edgeNode.first])
+					{
+						parent[edgeNode.first].insert(u);
+					}
 				}
 			}
 		}
 	}
+	int  s = 0;
 	for (int i = 0; i < nodes.size(); i++)
 	{
-		cout << n << " : " << printPath(parent, i) << endl;
+		cout << n << printPath(parent, i) << endl;
 	}
 	return dist;
 }
@@ -123,7 +134,12 @@ int main()
 		cin >> t1 >> t2 >> t3;
 		graph.addEdge(t1, t2, t3);
 	}
-	closeness(graph.nodes);
+	//closeness(graph.nodes);
+
+	for (int n = 0; n < graph.nodes.size(); n++)
+	{
+		dijkstra(graph.nodes, n);
+	}
 	cin >> t1;
 	cout << graph.nodes[t1].sumEdges();
 }
