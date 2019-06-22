@@ -1,6 +1,5 @@
 #include <iostream>
 #include <map>
-#include <vector>
 #include <string>
 using namespace std;
 class Node
@@ -54,9 +53,7 @@ string printPath(int parent[], int j)
 {
 	if (parent[j] == -1)
 		return "";
-
 	return  printPath(parent, parent[j]) + "->" + to_string(j);
-
 }
 void dijkstra(map<int, Node> nodes, int intermediate)
 {
@@ -74,17 +71,14 @@ void dijkstra(map<int, Node> nodes, int intermediate)
 			visited[u] = true;
 			if (dist[u] != INT_MAX)
 			{
-				for (int v = 0; v < nodes.size(); v++)
+				for (auto const& edgeNode : nodes[u].edges) //foreach edge in u.. (key = node, value = weight)
 				{
-					if (!visited[v] && nodes[u].edges.find(v) != nodes[u].edges.end()
-						&& (dist[u]
-							+ nodes[u].edges[v] < dist[v]))
+					if (!visited[edgeNode.first] && (dist[edgeNode.first] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
-						parent[v] = u;
-						dist[v] = dist[u] + nodes[u].edges[v];
+						parent[edgeNode.first] = u;	
+						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 					}
 				}
-
 			}
 		}
 		for (int i = 0; i < nodes.size(); i++)
