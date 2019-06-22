@@ -45,28 +45,37 @@ public:
 	}
 };
 
-
-void printPath(set<int> * parent , stack<int> s, int j, int f = 0)
+void incrementPoint(map<pair<int, int>, int> & table, int start, int end)
+{
+	if (table.find(pair<int, int>(start, end)) != table.end()) table[pair<int, int>(start, end)]++;
+	else table[pair<int, int>(start, end)] = 1;
+}
+void find_st_stv(set<int> * parent , stack<int> s, int j, int intermediate, map<pair<int,int>, int> & st, map<pair<int, int>, int> & stv)
 {
 	if (*parent[j].begin() == -1)
 	{
 		if (s.empty()) return;
-		cout << j;
+		//cout << j;
+		bool _intermediate = false;
+		//start: j;
 		while (!s.empty())
-		{
-			cout << "," << s.top();
+		{	
+			int i = s.top();
+			//cout << "," << i;
 			s.pop();
+			if (i == intermediate && !s.empty())
+				_intermediate = true;
+			else if (s.empty()) incrementPoint(_intermediate? stv: st, j, i);
 		}
-		cout << endl;
+		//cout << endl;
 		
 		return;
-	}
+	}	
 	s.push(j);
-
 
 	for (auto i : parent[j])
 	{
-		printPath(parent,s, i,f++);
+		find_st_stv(parent,s, i, intermediate, st, stv);
 	}
 	return;
 }
@@ -80,6 +89,55 @@ int minDistance(map<int, int> dist, map<int, bool> visited)
 	return min_index; //possible crash: variable not defined; should not happen
 }
 
+float betweenness(map<int, Node> nodes, int n, int intermediate = -1)
+{
+	map<int, bool> visited;
+	map<int, int> dist;
+	set<int> * parent = new set<int>[nodes.size()];
+	for (int i = 0; i < nodes.size(); i++) visited[i] = false, dist[i] = INT_MAX;
+	dist[n] = 0;
+	parent[n].insert(-1);
+	for (int i = 0; i < nodes.size() - 1; i++)
+	{
+		int u = minDistance(dist, visited);
+		visited[u] = true;
+		if (dist[u] != INT_MAX)
+		{
+			for (auto const& edgeNode : nodes[u].edges) //foreach edge in u.. (key = node, value = weight)
+			{
+				if (!visited[edgeNode.first])
+				{
+					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
+					{
+						parent[edgeNode.first].clear();
+						parent[edgeNode.first].insert(u);
+						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
+
+					}
+					else if (dist[u] + edgeNode.second == dist[edgeNode.first])
+					{
+						parent[edgeNode.first].insert(u);
+					}
+				}
+			}
+		}
+	}
+		map<pair<int, int>, int> stv;
+		map<pair<int, int>, int> st;
+		for (int i = n; i < nodes.size(); i++)
+		{
+			stack<int> s;
+			find_st_stv(parent, s, i, intermediate, st, stv);
+		}
+		float sum = 0;
+		for (auto i : stv)
+		{
+			sum += ((float)i.second / (float)((st.find(pair<int, int>(i.first.first, i.first.second)) != st.end()) ? (st[pair<int, int>(i.first.first, i.first.second)] + i.second) : i.second));
+		}
+	
+	delete[] parent;
+	return sum;
+}
 map<int, int> dijkstra(map<int, Node> nodes, int n)
 {
 	map<int, bool> visited;
@@ -113,14 +171,7 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 			}
 		}
 	}
-
-	for (int i =n; i < nodes.size(); i++)
-	{
-		
-		stack<int> s;
-		printPath(parent,s, i);
-		
-	}
+	delete[] parent;
 	return dist;
 }
 void closeness(map<int, Node> nodes)
@@ -152,10 +203,14 @@ int main()
 		graph.addEdge(t1, t2, t3);
 	}
 	//closeness(graph.nodes);
-
-	for (int n = 0; n < graph.nodes.size(); n++)
+	for (int i = 0; i < graph.nodes.size(); i++)
 	{
-		dijkstra(graph.nodes, n);
+		float sum = 0;
+		for (int n = 0; n < graph.nodes.size(); n++)
+		{
+			sum += betweenness(graph.nodes, n, i);
+		}
+		cout << "g(" << i << ") = " << sum << endl;
 	}
 	cin >> t1;
 	cout << graph.nodes[t1].sumEdges();
