@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 using namespace std;
 class Node
 {
@@ -41,6 +42,20 @@ public:
 		delete[] Cb;
 	}
 };
+
+string printPath(vector<int> * parent, int j)
+{
+	if (find(parent[j].begin(), parent[j].end(), -1) != parent[j].end())
+		return "";
+	
+	string s = "";
+	for (vector<int>::iterator it = parent[j].begin(); it != parent[j].end(); it++)
+	{
+		s += printPath(parent, *it) + "->" + to_string(j);
+	}
+	return s;
+}
+
 int minDistance(map<int, int> dist, map<int, bool> visited)
 {
 	int min = INT_MAX, min_index;
@@ -49,21 +64,15 @@ int minDistance(map<int, int> dist, map<int, bool> visited)
 			min = dist[v], min_index = v;
 	return min_index; //possible crash: variable not defined; should not happen
 }
-string printPath(int parent[], int j)
-{
-	if (parent[j] == -1)
-		return "";
-	return  printPath(parent, parent[j]) + "->" + to_string(j);
-}
-
 map<int, int> dijkstra(map<int, Node> nodes, int n)
 {
 	map<int, bool> visited;
 	map<int, int> dist;
-	int * parent = new int[nodes.size()];
+	vector<int> * parent = new vector<int>[n];
 
-	for (int i = 0; i < nodes.size(); i++) parent[i] = -1, visited[i] = false, dist[i] = INT_MAX;
+	for (int i = 0; i < nodes.size(); i++) visited[i] = false, dist[i] = INT_MAX;
 	dist[n] = 0;
+	parent[n].push_back(-1);
 	for (int i = 0; i < nodes.size() - 1; i++)
 	{
 		int u = minDistance(dist, visited);
@@ -74,13 +83,16 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 			{
 				if (!visited[edgeNode.first] && (dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 				{
-					parent[edgeNode.first] = u;
+					parent[edgeNode.first].push_back(u);
 					dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 				}
 			}
 		}
 	}
-	delete[] parent;
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		cout << n << " : " << printPath(parent, i) << endl;
+	}
 	return dist;
 }
 void closeness(map<int, Node> nodes)
