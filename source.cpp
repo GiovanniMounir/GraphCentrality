@@ -45,14 +45,14 @@ public:
 
 string printPath(set<int> * parent, int j)
 {
-	if (find(parent[j].begin(), parent[j].end(), -1) != parent[j].end())
+	if (*parent[j].begin() == -1)
 		return "\n";
 	
 	string s = "";
 
-	for (set<int>::iterator it = parent[j].begin(); it != parent[j].end(); it++)
+	for (auto i : parent[j])
 	{
-		s += printPath(parent, *it) + "->" + to_string(j);
+		s += printPath(parent, i) + "->" + to_string(j);
 	}
 	return s;
 }
@@ -86,7 +86,6 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 				{
 					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
-						parent[edgeNode.first].clear();
 						parent[edgeNode.first].insert(u);
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 						/*
