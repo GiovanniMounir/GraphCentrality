@@ -65,17 +65,19 @@ void dijkstra(map<int, Node> nodes, int intermediate)
 		for (int i = 0; i < nodes.size(); i++) parent[i] = -1, visited[i] = false, dist[i] = INT_MAX;
 		dist[n] = 0;
 		cout << "[" << n << "]" << endl;
-		for (int i = 0; i < nodes.size() - 1; i++)
+		int j = 0;
+		while (j < nodes.size())
 		{
 			int u = minDistance(dist, visited, nodes.size());
 			visited[u] = true;
+			j++;
 			if (dist[u] != INT_MAX)
 			{
 				for (auto const& edgeNode : nodes[u].edges) //foreach edge in u.. (key = node, value = weight)
 				{
 					if (!visited[edgeNode.first] && (dist[edgeNode.first] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
-						parent[edgeNode.first] = u;	
+						parent[edgeNode.first] = u;
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 					}
 				}
