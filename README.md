@@ -21,7 +21,7 @@ The project also provides a DrawTool to visualize the graph, implemented in Pyth
 %Edge2NodeFrom% %Edge2NodeTo% %Edge2Weight%
 ...
 ```
-**Example Input**
+**Example Input**<br>
 For 5 nodes and 6 edges, supply the following:
 
 ```
