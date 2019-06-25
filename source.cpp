@@ -4,6 +4,7 @@
 #include <set>
 #include <list>
 #include <stack>
+#include <time.h>
 using namespace std;
 class Node
 {
@@ -43,7 +44,7 @@ void incrementPoint(map<pair<int, int>, int> & table, int start, int end)
 	if (table.find(pair<int, int>(start, end)) != table.end()) table[pair<int, int>(start, end)]++;
 	else table[pair<int, int>(start, end)] = 1;
 }
-void find_st_stv(set<int> * parent , stack<int> s, int j, int intermediate, map<pair<int,int>, int> & st, map<pair<int, int>, int> & stv)
+void find_st_stv(set<int> * parent, stack<int> s, int j, int intermediate, map<pair<int, int>, int> & st, map<pair<int, int>, int> & stv)
 {
 	if (*parent[j].begin() == -1)
 	{
@@ -52,23 +53,23 @@ void find_st_stv(set<int> * parent , stack<int> s, int j, int intermediate, map<
 		bool _intermediate = false;
 		//start: j;
 		while (!s.empty())
-		{	
+		{
 			int i = s.top();
 			//cout << "," << i;
 			s.pop();
 			if (i == intermediate && !s.empty())
 				_intermediate = true;
-			else if (s.empty()) incrementPoint(_intermediate? stv: st, j, i);
+			else if (s.empty()) incrementPoint(_intermediate ? stv : st, j, i);
 		}
 		//cout << endl;
-		
+
 		return;
-	}	
+	}
 	s.push(j);
 
 	for (auto i : parent[j])
 	{
-		find_st_stv(parent,s, i, intermediate, st, stv);
+		find_st_stv(parent, s, i, intermediate, st, stv);
 	}
 	return;
 }
@@ -82,11 +83,11 @@ int minDistance(map<int, int> dist, map<int, bool> visited)
 	return min_index; //possible crash: variable not defined; should not happen
 }
 
-float betweenness(map<int, Node> nodes, int n, int intermediate = -1)
+void dijkstra_parent(map<int, Node> nodes, int n, set<int> * parent)
 {
+
 	map<int, bool> visited;
 	map<int, int> dist;
-	set<int> * parent = new set<int>[nodes.size()];
 	for (int i = 0; i < nodes.size(); i++) visited[i] = false, dist[i] = INT_MAX;
 	dist[n] = 0;
 	parent[n].insert(-1);
@@ -115,20 +116,22 @@ float betweenness(map<int, Node> nodes, int n, int intermediate = -1)
 			}
 		}
 	}
-		map<pair<int, int>, int> stv;
-		map<pair<int, int>, int> st;
-		for (int i = n; i < nodes.size(); i++)
-		{
-			stack<int> s;
-			find_st_stv(parent, s, i, intermediate, st, stv);
-		}
-		float sum = 0;
-		for (auto i : stv)
-		{
-			sum += ((float)i.second / (float)((st.find(pair<int, int>(i.first.first, i.first.second)) != st.end()) ? (st[pair<int, int>(i.first.first, i.first.second)] + i.second) : i.second));
-		}
-	
-	delete[] parent;
+}
+float betweenness(map<int, Node> nodes, set<int> * parent, int n, int intermediate = -1)
+{
+	map<pair<int, int>, int> stv;
+	map<pair<int, int>, int> st;
+	for (int i = n; i < nodes.size(); i++)
+	{
+		stack<int> s;
+		find_st_stv(parent, s, i, intermediate, st, stv);
+	}
+	float sum = 0;
+	for (auto i : stv)
+	{
+		sum += ((float)i.second / (float)((st.find(pair<int, int>(i.first.first, i.first.second)) != st.end()) ? (st[pair<int, int>(i.first.first, i.first.second)] + i.second) : i.second));
+	}
+
 	return sum;
 }
 map<int, int> dijkstra(map<int, Node> nodes, int n)
@@ -150,7 +153,7 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
-						
+
 					}
 				}
 			}
@@ -175,6 +178,7 @@ void closeness(map<int, Node> nodes)
 		cout << ratio << endl;
 	}
 }
+
 int main()
 {
 	int n, m;
@@ -187,15 +191,32 @@ int main()
 		graph.addEdge(t1, t2, t3);
 	}
 	//closeness(graph.nodes);
-	for (int i = 0; i < graph.nodes.size(); i++)
+
+	map<int, set<int> *> parent;
+
+	clock_t start = clock();
+
+	float  * sum = new float[graph.nodes.size()];
+	for (int n = 0; n < graph.nodes.size(); n++)
 	{
-		float sum = 0;
-		for (int n = 0; n < graph.nodes.size(); n++)
-		{
-			sum += betweenness(graph.nodes, n, i);
-		}
-		cout << "g(" << i << ") = " << sum << endl;
+		sum[n] = 0;
 	}
+	for (int n = 0; n < graph.nodes.size(); n++)
+	{
+		parent[n] = new set<int>[graph.nodes.size()];
+		dijkstra_parent(graph.nodes, n, parent[n]);
+		for (int i = 0; i < graph.nodes.size(); i++)
+		{
+			sum[i] += betweenness(graph.nodes, parent[n], n, i);
+		}
+	}
+
+	for (int n = 0; n < graph.nodes.size(); n++)
+	{
+		cout << "g(" << n << ") = " << sum[n] << endl;
+	}
+	clock_t end = clock();
+	cout << "time elapsed (seconds): " << ((end-start)/ CLOCKS_PER_SEC) << endl;
 	cin >> t1;
 	cout << graph.nodes[t1].sumEdges();
 }
