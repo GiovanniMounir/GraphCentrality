@@ -201,6 +201,7 @@ int main()
 	{
 		sum[n] = 0;
 	}
+	cout << "Calculating..." << endl;
 	for (int n = 0; n < graph.nodes.size(); n++)
 	{
 		parent[n] = new set<int>[graph.nodes.size()];
