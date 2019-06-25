@@ -36,13 +36,6 @@ public:
 		nodes[index].connectNode(target, weight);
 		nodes[target].connectNode(index, weight);
 	}
-	void Naive()
-	{
-		int * Cb = new int[nodes.size()];
-		for (int i = 0; i < nodes.size(); i++) Cb[i] = 0;
-
-		delete[] Cb;
-	}
 };
 
 void incrementPoint(map<pair<int, int>, int> & table, int start, int end)
@@ -142,10 +135,8 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 {
 	map<int, bool> visited;
 	map<int, int> dist;
-	set<int> * parent = new set<int>[nodes.size()];
 	for (int i = 0; i < nodes.size(); i++) visited[i] = false, dist[i] = INT_MAX;
 	dist[n] = 0;
-	parent[n].insert(-1);
 	for (int i = 0; i < nodes.size() - 1; i++)
 	{
 		int u = minDistance(dist, visited);
@@ -158,20 +149,13 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 				{
 					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 					{
-						parent[edgeNode.first].clear();
-						parent[edgeNode.first].insert(u);
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
 						
-					}
-					else if (dist[u] + edgeNode.second == dist[edgeNode.first])
-					{
-						parent[edgeNode.first].insert(u);
 					}
 				}
 			}
 		}
 	}
-	delete[] parent;
 	return dist;
 }
 void closeness(map<int, Node> nodes)
