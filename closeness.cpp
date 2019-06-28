@@ -70,7 +70,7 @@ void closeness(map<int, Node> nodes)
 {
 	for (int n = 0; n < nodes.size(); n++)
 	{
-		float sum = 0;
+		double sum = 0;
 		map<int, int> dist = dijkstra(nodes, n);
 		for (int i = 0; i < nodes.size(); i++)
 		{
@@ -79,7 +79,7 @@ void closeness(map<int, Node> nodes)
 				sum += dist[i];
 			}
 		}
-		float ratio = (float)(nodes.size() - 1) / sum;
+		double ratio = (double)(nodes.size() - 1) / sum;
 		printf("%.12f\n", ratio);
 	
 	}
