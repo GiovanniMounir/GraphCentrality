@@ -66,23 +66,23 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 	}
 	return dist;
 }
+double closeness_node(int n, map<int,Node> & nodes) {
+	double sum = 0;
+	map<int, int> dist = dijkstra(nodes, n);
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		if (dist[i] > 0)
+		{
+			sum += dist[i];
+		}
+	}
+	return (double)(nodes.size() - 1) / sum;
+}
 void closeness(map<int, Node> nodes)
 {
-	for (int n = 0; n < nodes.size(); n++)
-	{
-		double sum = 0;
-		map<int, int> dist = dijkstra(nodes, n);
-		for (int i = 0; i < nodes.size(); i++)
-		{
-			if (dist[i] > 0)
-			{
-				sum += dist[i];
-			}
-		}
-		double ratio = (double)(nodes.size() - 1) / sum;
-		printf("%.12f\n", ratio);
-	
-	}
+	for (int n = 0; n < nodes.size() - 1; n++)
+		printf("%.12f\n", closeness_node(n, nodes));
+	printf("%.12f", closeness_node(nodes.size()-1, nodes));
 }
 
 int main()
