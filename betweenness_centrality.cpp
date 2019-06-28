@@ -146,5 +146,5 @@ int main()
 	}
 	for (int n = 0; n < graph.nodes.size() -1 ; n++)
 		printf("%.12f\n", sum[n]);
-	printf("%.12f\n", sum[graph.nodes.size() - 1]);
+	printf("%.12f", sum[graph.nodes.size() - 1]);
 }
