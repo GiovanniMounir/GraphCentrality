@@ -53,14 +53,8 @@ map<int, int> dijkstra(map<int, Node> nodes, int n)
 		{
 			for (auto const& edgeNode : nodes[u].edges) //foreach edge in u.. (key = node, value = weight)
 			{
-				if (!visited[edgeNode.first])
-				{
-					if ((dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
-					{
+					if (!visited[edgeNode.first] && (dist[u] + edgeNode.second < dist[edgeNode.first])) //pick minimum unvisited edge node in v
 						dist[edgeNode.first] = dist[u] + nodes[u].edges[edgeNode.first];
-
-					}
-				}
 			}
 		}
 	}
