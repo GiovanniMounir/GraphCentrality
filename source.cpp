@@ -190,7 +190,7 @@ int main()
 		cin >> t1 >> t2 >> t3;
 		graph.addEdge(t1, t2, t3);
 	}
-	//closeness(graph.nodes);
+	closeness(graph.nodes);
 
 	map<int, set<int> *> parent;
 
