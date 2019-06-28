@@ -18,9 +18,12 @@ pos = nx.spring_layout(G)
 nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
 d = nx.betweenness_centrality(G, weight="weight", normalized=False)
 
+print("Betweenness Centrality:")
 print(nx.betweenness_centrality(G, weight="weight", normalized=False))
-print(nx.closeness_centrality(G, weight="weight", normalized=False))
-print(nx.degree_centrality(G, weight="weight", normalized=False))
+print("Closeness Centrality:")
+print(nx.closeness_centrality(G,None, "weight"))
+print("Degree Centrality:")
+print(nx.degree_centrality(G))
 
 
 nx.draw(G,pos, node_size=[max(v * 1500,100) for v in d.values()] , with_labels=True)
