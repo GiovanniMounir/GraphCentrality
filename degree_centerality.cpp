@@ -17,6 +17,7 @@ int main()
 		cin >> temp;
 	}
 
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n-1; i++)
 		cout << _array[i] << "\n";
+		cout<<_array[n-1];
 }
